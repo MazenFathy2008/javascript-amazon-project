@@ -1,9 +1,7 @@
-const productGrid = document.querySelector(".js-prodcts-grid");
-
+const productGridElement = document.querySelector(".js-prodcts-grid");
 function generateHtml(list = []) {
   let html = ` `;
   list.forEach((product) => {
-    console.log(product.image);
     html += `
     <div class="product-container">
           <div class="product-image-container">
@@ -28,7 +26,7 @@ function generateHtml(list = []) {
           </div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class="js-select-quantatiy">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -49,7 +47,7 @@ function generateHtml(list = []) {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary">
+          <button class="add-to-cart-button button-primary js-add-button">
             Add to Cart
           </button>
         </div>
@@ -58,4 +56,4 @@ function generateHtml(list = []) {
   return html;
 }
 let Html = generateHtml(products);
-productGrid.innerHTML = Html;
+productGridElement.innerHTML = Html;
