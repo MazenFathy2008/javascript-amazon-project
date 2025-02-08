@@ -47,7 +47,7 @@ function generateHtml(list = []) {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary js-add-button">
+          <button class="add-to-cart-button button-primary js-add-button" data-product-id="${product.id}">
             Add to Cart
           </button>
         </div>
