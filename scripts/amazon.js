@@ -1,4 +1,7 @@
+// put the grid element in the js
 const productGridElement = document.querySelector(".js-prodcts-grid");
+
+// this used to generate html for page
 function generateHtml(list = []) {
   let html = ` `;
   list.forEach((product) => {
@@ -47,13 +50,14 @@ function generateHtml(list = []) {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary js-add-button" data-product-id="${product.id}">
+          <button class="add-to-cart-button button-primary js-add-button" data-product-id="${product.id}"> <!-- this add data to this button to be able to use it later -->
             Add to Cart
           </button>
         </div>
     `;
   });
   return html;
-}
+} 
+// render html
 let Html = generateHtml(products);
 productGridElement.innerHTML = Html;
