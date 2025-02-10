@@ -1,5 +1,7 @@
+import { cartUnpacking } from "./cartUnpacking.js";
+////////////////////////////
 // this used to generate html for page
-export function generateHtml(list = []) {
+export function htmlForAmazonPage(list = []) {
   let html = ` `;
   list.forEach((product) => {
     html += `
@@ -67,4 +69,88 @@ export function generateHtml(list = []) {
     `;
   });
   return html;
+}
+////////////////////////////
+export function htmlForCkeckout(cart, products) {
+  const checkOutGridElement = document.querySelector(".js-checkout-grid");
+  const itemQuantityElement = document.querySelector(".js-items-quantity");
+  let productsInCart = cartUnpacking();
+  
+  const generateHtmlForRender = () => {
+    let quantity = 0;
+    productsInCart.forEach((product) => {
+      quantity += product[1];
+      checkOutGridElement.innerHTML += `
+          <div class="cart-item-container">
+            <div class="delivery-date">Delivery date: Wednesday, June 15</div>
+
+            <div class="cart-item-details-grid">
+              <img
+                class="product-image"
+                src="${product[0].image}"
+              />
+
+              <div class="cart-item-details">
+                <div class="product-name">Intermediate Size Basketball</div>
+                <div class="product-price">$${(
+                  product[0].priceCents / 100
+                ).toFixed(2)}</div>
+                <div class="product-quantity">
+                  <span> Quantity: <span class="quantity-label">${
+                    product[1]
+                  }</span> </span>
+                  <span class="update-quantity-link link-primary">
+                    Update
+                  </span>
+                  <span class="delete-quantity-link link-primary">
+                    Delete
+                  </span>
+                </div>
+              </div>
+              <div class="delivery-options">
+                <div class="delivery-options-title">
+                  Choose a delivery option:
+                </div>
+                <div class="delivery-option">
+                  <input
+                    type="radio"
+                    checked
+                    class="delivery-option-input"
+                    name="delivery-option-${product[0].id}"
+                  />
+                  <div>
+                    <div class="delivery-option-date">Tuesday, June 21</div>
+                    <div class="delivery-option-price">FREE Shipping</div>
+                  </div>
+                </div>
+                <div class="delivery-option">
+                  <input
+                    type="radio"
+                    class="delivery-option-input"
+                    name="delivery-option-${product[0].id}"
+                  />
+                  <div>
+                    <div class="delivery-option-date">Wednesday, June 15</div>
+                    <div class="delivery-option-price">$4.99 - Shipping</div>
+                  </div>
+                </div>
+                <div class="delivery-option">
+                  <input
+                    type="radio"
+                    class="delivery-option-input"
+                    name="delivery-option-${product[0].id}"
+                  />
+                  <div>
+                    <div class="delivery-option-date">Monday, June 13</div>
+                    <div class="delivery-option-price">$9.99 - Shipping</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+`;
+    });
+    itemQuantityElement.innerHTML = `${quantity} items`;
+  };
+  generateHtmlForRender();
 }
