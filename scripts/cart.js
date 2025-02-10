@@ -1,6 +1,8 @@
+const addedAnimationElement = document.querySelectorAll(
+  ".Added-animtion-flexbox"
+);
 //  declearation to the cart array and get the array of products from local storage
 const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
 const calculateQuantity = () =>
   cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -33,6 +35,10 @@ addButtonElement.forEach((button, index) => {
   // ---> useing foreach to loop on each element in the array
   const productId = button.dataset.productId; // ---> put the name of object from dataset of button
   button.addEventListener("click", () => {
+    addedAnimationElement[index].style.opacity = 1;
+    setTimeout(() => {
+      addedAnimationElement[index].style.opacity = 0;
+    }, 2000);
     // ---> event for each button
     const isExist = cart.find((product) => product.id === productId);
     //check if the product is in the cart
@@ -50,4 +56,3 @@ addButtonElement.forEach((button, index) => {
   });
 });
 updateCart();
-
