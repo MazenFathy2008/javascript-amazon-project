@@ -1,4 +1,6 @@
 import { cartUnpacking } from "./cartUnpacking.js";
+import { deleteButton } from "./delet-button-checkout.js";
+import { updadeQuantity } from "./update-quantity.js";
 ////////////////////////////
 // this used to generate html for page
 export function htmlForAmazonPage(list = []) {
@@ -71,13 +73,13 @@ export function htmlForAmazonPage(list = []) {
   return html;
 }
 ////////////////////////////
-export function htmlForCkeckout(cart, products) {
+export function htmlForCkeckout() {
   const checkOutGridElement = document.querySelector(".js-checkout-grid");
   const itemQuantityElement = document.querySelector(".js-items-quantity");
   let productsInCart = cartUnpacking();
-  
   const generateHtmlForRender = () => {
     let quantity = 0;
+    checkOutGridElement.innerHTML = " ";
     productsInCart.forEach((product) => {
       quantity += product[1];
       checkOutGridElement.innerHTML += `
@@ -99,10 +101,14 @@ export function htmlForCkeckout(cart, products) {
                   <span> Quantity: <span class="quantity-label">${
                     product[1]
                   }</span> </span>
-                  <span class="update-quantity-link link-primary">
+                  <div class="update-quantity-link link-primary js-update-input" data-update-id = "${
+                    product[0].id
+                  }">
                     Update
-                  </span>
-                  <span class="delete-quantity-link link-primary">
+                  </div>
+                  <span class="delete-quantity-link link-primary js-delet-button" data-button-id='${
+                    product[0].id
+                  }'>
                     Delete
                   </span>
                 </div>
@@ -152,5 +158,8 @@ export function htmlForCkeckout(cart, products) {
     });
     itemQuantityElement.innerHTML = `${quantity} items`;
   };
+
   generateHtmlForRender();
+  deleteButton();
+  updadeQuantity();
 }

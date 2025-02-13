@@ -116,7 +116,14 @@
 }
 
 .product-quantity .link-primary {
+  display: inline;
   margin-left: 3px;
+}
+.save-span{
+  color: rgb(1, 124, 182);
+}
+.save-span:hover{
+  color: rgb(196, 80, 0);
 }
 
 @media (max-width: 1000px) {
@@ -208,4 +215,8 @@
 
   margin-top: 11px;
   margin-bottom: 15px;
+}
+.update-number-input{
+  width: 50px;
+  padding: 2px;
 }

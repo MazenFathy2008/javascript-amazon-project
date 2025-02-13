@@ -2,7 +2,7 @@ import { products } from "../../data/products.js";
 import { cart } from "../../data/cart.js";
 export const cartUnpacking = () => {
   let productsInCart = [];
-  cart.map((productCart) => {
+  cart.forEach((productCart) => {
     const isExist = productsInCart.find(
       (product) => product.id === productCart.id
     );

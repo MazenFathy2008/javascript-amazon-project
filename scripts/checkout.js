@@ -1,6 +1,4 @@
-import { products } from "../data/products.js"; // --> data
-import { cart } from "../data/cart.js"; // --> data
 import { htmlForCkeckout } from "./functions/generating-html.js";
+import { updadeQuantity } from "./functions/update-quantity.js";
 ////////////////////////////
-htmlForCkeckout(cart,products)
-
+htmlForCkeckout();
