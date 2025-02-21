@@ -77,15 +77,15 @@ export function htmlForCkeckout() {
   const checkOutGridElement = document.querySelector(".js-checkout-grid");
   const itemQuantityElement = document.querySelector(".js-items-quantity");
   let productsInCart = cartUnpacking();
+  let html = ``;
   const generateHtmlForRender = () => {
     let quantity = 0;
-    checkOutGridElement.innerHTML = " ";
+
     productsInCart.forEach((product) => {
       quantity += product[1];
-      checkOutGridElement.innerHTML += `
+      html += `
           <div class="cart-item-container">
             <div class="delivery-date">Delivery date: Wednesday, June 15</div>
-
             <div class="cart-item-details-grid">
               <img
                 class="product-image"
@@ -156,9 +156,9 @@ export function htmlForCkeckout() {
           </div>
 `;
     });
+    checkOutGridElement.innerHTML = html;
     itemQuantityElement.innerHTML = `${quantity} items`;
   };
-
   generateHtmlForRender();
   deleteButton();
   updadeQuantity();
