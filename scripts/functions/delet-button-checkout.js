@@ -1,17 +1,21 @@
+//importing modules needded
 import { cart } from "../../data/cart.js";
-// import { products } from "../../data/products.js";
-import { htmlForCkeckout } from "./generating-html.js";
-export function deleteButton() {
-  const deleteButtonElement = document.querySelectorAll(".js-delet-button");
-  deleteButtonElement.forEach((button) => {
-    button.addEventListener('click', () => {
-      cart.forEach((cartProduct,index)=>{
-        if(button.dataset.buttonId === cartProduct.id){
-          cart.splice(index,1)
-          localStorage.setItem('cart',JSON.stringify(cart))
-          htmlForCkeckout()
-        }
-      })
+////////////////////////////
+export function deleteButton(deletSpan, divElement) {
+  deletSpan.addEventListener("click", () => {
+    const itemQuantityElement = document.querySelector(".js-items-quantity");
+
+    cart.forEach((cartProduct, index) => {
+      if (deletSpan.dataset.buttonId === cartProduct.id) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        divElement.remove();
+        const quantity = cart.reduce((acc, product) => {
+          acc += product.quantity;
+          return acc;
+        }, 0);
+        itemQuantityElement.innerHTML = `${quantity} items`;
+      }
     });
   });
 }

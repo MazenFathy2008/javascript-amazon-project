@@ -1,6 +1,6 @@
+//importing modules needded
 import { cartUnpacking } from "./cartUnpacking.js";
-import { deleteButton } from "./delet-button-checkout.js";
-import { updadeQuantity } from "./update-quantity.js";
+import { conrolingEachDiv } from "./renering-checkout.js";
 ////////////////////////////
 // this used to generate html for page
 export function htmlForAmazonPage(list = []) {
@@ -73,38 +73,40 @@ export function htmlForAmazonPage(list = []) {
   return html;
 }
 ////////////////////////////
-export function htmlForCkeckout() {
+
+const generateHtmlForRender = () => {
+  const productsInCart = cartUnpacking();
+  let quantity = productsInCart.reduce((acc, product) => {
+    acc += parseInt(product[1]);
+    return acc;
+  }, 0);
   const checkOutGridElement = document.querySelector(".js-checkout-grid");
   const itemQuantityElement = document.querySelector(".js-items-quantity");
-  let productsInCart = cartUnpacking();
-  let html = ``;
-  const generateHtmlForRender = () => {
-    let quantity = 0;
-
-    productsInCart.forEach((product) => {
-      quantity += product[1];
-      html += `
-          <div class="cart-item-container">
+  let html = " ";
+  productsInCart.forEach((product) => {
+    html += `<div class="cart-item-container js-cart-item-div">
             <div class="delivery-date">Delivery date: Wednesday, June 15</div>
             <div class="cart-item-details-grid">
               <img
                 class="product-image"
                 src="${product[0].image}"
               />
-
+  
               <div class="cart-item-details">
                 <div class="product-name">Intermediate Size Basketball</div>
                 <div class="product-price">$${(
                   product[0].priceCents / 100
                 ).toFixed(2)}</div>
                 <div class="product-quantity">
-                  <span> Quantity: <span class="quantity-label">${
-                    product[1]
-                  }</span> </span>
+                  <span> Quantity: 
+                    <span class="quantity-label js-quantity">${
+                      product[1]
+                    }</span> 
+                  </span>
                   <div class="update-quantity-link link-primary js-update-input" data-update-id = "${
                     product[0].id
                   }">
-                    Update
+                    <span class="js-update-span">Update</span>
                   </div>
                   <span class="delete-quantity-link link-primary js-delet-button" data-button-id='${
                     product[0].id
@@ -153,13 +155,13 @@ export function htmlForCkeckout() {
                 </div>
               </div>
             </div>
-          </div>
-`;
-    });
-    checkOutGridElement.innerHTML = html;
-    itemQuantityElement.innerHTML = `${quantity} items`;
-  };
+          </div>`;
+  });
+  checkOutGridElement.innerHTML = html;
+  itemQuantityElement.innerHTML = `${quantity} items`;
+};
+
+export function htmlForCkeckout() {
   generateHtmlForRender();
-  deleteButton();
-  updadeQuantity();
+  conrolingEachDiv();
 }

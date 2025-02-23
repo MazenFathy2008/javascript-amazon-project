@@ -14,4 +14,3 @@ productGridElement.innerHTML = Html;
 ///////////////////////////////////////////////
 /* cart code */
 addButtonFunc(cart)
-console.log(cart)

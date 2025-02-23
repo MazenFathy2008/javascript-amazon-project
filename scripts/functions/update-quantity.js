@@ -1,23 +1,20 @@
-import { listClicked } from "./renering-checkout.js";
-import { renderSaveDelete } from "./renering-checkout.js";
-export function updadeQuantity() {
-  const updadeQuantityElement = document.querySelectorAll(`.js-update-input`);
-  updadeQuantityElement.forEach((element) => {
-    element.addEventListener("click", () => {
-      const isExist = listClicked.find((listElement) => element === listElement);
-      if (!isExist) {
-        listClicked.push(element);
-      }
-      renderSaveDelete();
-    });
+//importing modules needded
+import { saveButton } from "./save-button.js";
+////////////////////////////
+export function updadeQuantity(element, divElements) {
+  const updateSpan = divElements.querySelector(".js-update-span");
+  updateSpan.addEventListener("click", () => {
+    const value = updadeQuantityValue(element);
+    element.innerHTML = `<input type='number' value = ${value} class="update-number-input js-add-number
+            }"> <span class = 'save-span js-save-button'>save</span></input>`;
+    saveButton(divElements);
   });
 }
-
-export function updadeQuantityValue() {
-  const updateCounteElement = document.querySelectorAll(".js-add-number");
-  updateCounteElement.forEach((element) => {
-    element.addEventListener("click", () => {
-      renderSaveDelete();
-    });
-  });
-}
+const updadeQuantityValue = (element) => {
+  const counter = element.querySelector(".js-add-number");
+  if (counter) {
+    const value = counter.value;
+    return value;
+  }
+  return 1;
+};
