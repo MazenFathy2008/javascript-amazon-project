@@ -8,6 +8,6 @@ export const conrolingEachDiv = () => {
     const updateSpanElement = element.querySelector(".js-update-input");
     const deleteSpanElement = element.querySelector(".js-delet-button");
     updadeQuantity(updateSpanElement, element);
-    deleteButton(deleteSpanElement,element);
+    deleteButton(deleteSpanElement, element);
   });
 };

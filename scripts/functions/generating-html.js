@@ -83,6 +83,8 @@ const generateHtmlForRender = () => {
   const checkOutGridElement = document.querySelector(".js-checkout-grid");
   const itemQuantityElement = document.querySelector(".js-items-quantity");
   let html = " ";
+
+  if(productsInCart.length){
   productsInCart.forEach((product) => {
     html += `<div class="cart-item-container js-cart-item-div">
             <div class="delivery-date">Delivery date: Wednesday, June 15</div>
@@ -93,7 +95,7 @@ const generateHtmlForRender = () => {
               />
   
               <div class="cart-item-details">
-                <div class="product-name">Intermediate Size Basketball</div>
+                <div class="product-name">${product[0].name}</div>
                 <div class="product-price">$${(
                   product[0].priceCents / 100
                 ).toFixed(2)}</div>
@@ -158,6 +160,14 @@ const generateHtmlForRender = () => {
           </div>`;
   });
   checkOutGridElement.innerHTML = html;
+  }else{
+    html = `<div class="cart-empty-div">
+            <p class="cart-empty-p">Cart is Empty</p>
+            <a href="amazon.html"><button class="View-products button-primary">View products</button></a>
+          </div>`
+    checkOutGridElement.innerHTML = html;
+  }
+  
   itemQuantityElement.innerHTML = `${quantity} items`;
 };
 

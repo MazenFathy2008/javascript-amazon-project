@@ -1,5 +1,6 @@
 import { cart } from "../../data/cart.js";
 import { updadeQuantity } from "./update-quantity.js";
+import { calcPrice } from "./calculate-price.js";
 export function saveButton(element) {
   const button = element.querySelector(".js-save-button");
   const numCounters = element.querySelector(".js-add-number");
@@ -19,6 +20,7 @@ export function saveButton(element) {
           quantityLable.innerHTML = newQuantity;
           itemQuantityElement.innerHTML = `${quantity} items`;
           updadeQuantityElement.innerHTML = `<span class="js-update-span">Update</span>`;
+          calcPrice();
           updadeQuantity(updadeQuantityElement, element);
         } else {
           alert("Invalid number (decrease by unexcbectid number)");

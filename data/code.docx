@@ -1,0 +1,430 @@
+first page code (amazon) : 
+// import needed files
+import { products } from "../data/products.js"; // --> data
+import { cart } from "../data/cart.js"; // --> data
+import { htmlForAmazonPage } from "./functions/generating-html.js"; // --> function
+import { addButtonFunc } from "./functions/add-button-func.js"; // --> function
+///////////////////////////////////////////////
+/* code for generating page */
+// put the grid element in the js
+const productGridElement = document.querySelector(".js-prodcts-grid");
+// render html
+let Html = htmlForAmazonPage(products);
+productGridElement.innerHTML = Html;
+
+///////////////////////////////////////////////
+/* cart code */
+addButtonFunc(cart)
+export const addButtonFunc = (cart = []) => {
+  // putting all Html elements that we need in variables to reuse it
+  const addButtonElement = document.querySelectorAll(".js-add-button");
+  const cartQuantityElement = document.querySelector(".js-cart-quantity");
+  const selectquantatiyElement = document.querySelectorAll(
+    ".js-select-quantatiy"
+  );
+  const addedAnimationElement = document.querySelectorAll(
+    ".Added-animtion-flexbox"
+  );
+  //  declearation to the cart array and get the array of products from local storage
+  const calculateQuantity = () =>
+    cart.reduce((total, item) => total + item.quantity, 0);
+
+  // get the quantity of the products from local storage
+  let quantity = calculateQuantity();
+
+  // set the new products in the local storage
+  const setItem = () => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    quantity = calculateQuantity();
+  };
+  // used to render the cart on page
+  const renderCart = () => {
+    //  render the quantity of cart
+    cartQuantityElement.innerHTML = `${quantity}`;
+  };
+
+  const updateCart = () => {
+    setItem();
+    renderCart();
+  };
+  // function used to add animation when click add button
+  const animationFunc = (index) => {
+    // if condtion to check if the animation is active or not
+    if (
+      addedAnimationElement[index].style.opacity === "0" ||
+      !addedAnimationElement[index].style.opacity
+    ) {
+      //if animation is not active it start animation and set time to stope it
+      addedAnimationElement[index].style.opacity = 1;
+      addedAnimationElement[index].timeId = setTimeout(() => {
+        addedAnimationElement[index].style.opacity = 0;
+      }, 1500);
+      return;
+    }
+    /* if animation is worked and re-click on the button 
+  will increase the time of animation*/
+    clearTimeout(addedAnimationElement[index].timeId);
+    addedAnimationElement[index].timeId = setTimeout(() => {
+      addedAnimationElement[index].style.opacity = 0;
+    }, 1500);
+  };
+  // Beggining of the code
+  addButtonElement.forEach((button, index) => {
+    // ---> useing foreach to loop on each element in the array
+    const productId = button.dataset.productId; // ---> put the name of object from dataset of button
+    button.addEventListener("click", () => {
+      animationFunc(index);
+      // ---> event for each button
+      const isExist = cart.find((product) => product.id === productId);
+      //check if the product is in the cart
+      if (isExist) {
+        // increase the quantity of the product in the cart
+        isExist.quantity += parseInt(selectquantatiyElement[index].value);
+      } else {
+        // add new prodact to the cart
+        cart.push({
+          id: productId,
+          quantity: parseInt(selectquantatiyElement[index].value),
+        }); // ---> end of add new prodact to the cart
+      }
+      updateCart();
+    });
+  });
+  updateCart();
+};
+export function htmlForAmazonPage(list = []) {
+  let html = ` `;
+  list.forEach((product) => {
+    html += `
+    <div class="product-container">
+          <div class="product-image-container">
+            <img class="product-image" src="${product.image}" />
+          </div>
+
+          <div class="product-name limit-text-to-2-lines">${product.name}</div>
+
+          <div class="product-rating-container">
+            <img
+              class="product-rating-stars"
+              src="images/ratings/rating-${product.rating.stars * 10}.png"
+            />
+            <div class="product-rating-count link-primary">
+              ${product.rating.count}
+            </div>
+          </div>
+
+          <div class="product-price">
+            $${(product.priceCents / 100).toFixed(2)}
+          </div>
+
+          <div class="product-quantity-container">
+            <select class="js-select-quantatiy">
+              <option selected value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <div class="product-spacer"></div>
+          <div class="add-button-flexbox">
+            <div class="added-to-cart">
+              <img src="images/icons/checkmark.png" />
+              Added
+            </div>
+            <div class="Added-animtion-flexbox">
+              <div class="Added-animtion js-Added-animtion">
+                <img
+                  src="images/icons/checkmark.png"
+                  alt="checkmark"
+                  class="checkmark-img"
+                />
+                <span class="Added">Added</span>
+              </div>
+            </div>
+            <button
+              class="add-to-cart-button button-primary js-add-button"
+              data-product-id="${product.id}"
+            >
+              <!-- this add data to this button to be able to use it later -->
+              Add to Cart
+            </button>
+          </div>
+        </div>
+    `;
+  });
+  return html;
+}
+
+secondepage code (checkout) : 
+
+
+//importing modules needded
+import { htmlForCkeckout } from "./functions/generating-html.js";
+import { calcPrice } from "./functions/calculate-price.js";
+////////////////////////////
+htmlForCkeckout();
+calcPrice()
+const generateHtmlForRender = () => {
+  const productsInCart = cartUnpacking();
+  let quantity = productsInCart.reduce((acc, product) => {
+    acc += parseInt(product[1]);
+    return acc;
+  }, 0);
+  const checkOutGridElement = document.querySelector(".js-checkout-grid");
+  const itemQuantityElement = document.querySelector(".js-items-quantity");
+  let html = " ";
+
+  if(productsInCart.length){
+  productsInCart.forEach((product) => {
+    html += `<div class="cart-item-container js-cart-item-div">
+            <div class="delivery-date">Delivery date: Wednesday, June 15</div>
+            <div class="cart-item-details-grid">
+              <img
+                class="product-image"
+                src="${product[0].image}"
+              />
+  
+              <div class="cart-item-details">
+                <div class="product-name">${product[0].name}</div>
+                <div class="product-price">$${(
+                  product[0].priceCents / 100
+                ).toFixed(2)}</div>
+                <div class="product-quantity">
+                  <span> Quantity: 
+                    <span class="quantity-label js-quantity">${
+                      product[1]
+                    }</span> 
+                  </span>
+                  <div class="update-quantity-link link-primary js-update-input" data-update-id = "${
+                    product[0].id
+                  }">
+                    <span class="js-update-span">Update</span>
+                  </div>
+                  <span class="delete-quantity-link link-primary js-delet-button" data-button-id='${
+                    product[0].id
+                  }'>
+                    Delete
+                  </span>
+                </div>
+              </div>
+              <div class="delivery-options">
+                <div class="delivery-options-title">
+                  Choose a delivery option:
+                </div>
+                <div class="delivery-option">
+                  <input
+                    type="radio"
+                    checked
+                    class="delivery-option-input"
+                    name="delivery-option-${product[0].id}"
+                  />
+                  <div>
+                    <div class="delivery-option-date">Tuesday, June 21</div>
+                    <div class="delivery-option-price">FREE Shipping</div>
+                  </div>
+                </div>
+                <div class="delivery-option">
+                  <input
+                    type="radio"
+                    class="delivery-option-input"
+                    name="delivery-option-${product[0].id}"
+                  />
+                  <div>
+                    <div class="delivery-option-date">Wednesday, June 15</div>
+                    <div class="delivery-option-price">$4.99 - Shipping</div>
+                  </div>
+                </div>
+                <div class="delivery-option">
+                  <input
+                    type="radio"
+                    class="delivery-option-input"
+                    name="delivery-option-${product[0].id}"
+                  />
+                  <div>
+                    <div class="delivery-option-date">Monday, June 13</div>
+                    <div class="delivery-option-price">$9.99 - Shipping</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+  });
+  checkOutGridElement.innerHTML = html;
+  }else{
+    html = `<div class="cart-empty-div">
+            <p class="cart-empty-p">Cart is Empty</p>
+            <a href="amazon.html"><button class="View-products button-primary">View products</button></a>
+          </div>`
+    checkOutGridElement.innerHTML = html;
+  }
+  
+  itemQuantityElement.innerHTML = `${quantity} items`;
+};
+
+export function htmlForCkeckout() {
+  generateHtmlForRender();
+  conrolingEachDiv();
+}
+//importing modules needded
+import { updadeQuantity } from "./update-quantity.js";
+import { deleteButton } from "./delet-button-checkout.js";
+////////////////////////////
+export const conrolingEachDiv = () => {
+  const itemDivElements = document.querySelectorAll(".js-cart-item-div");
+  itemDivElements.forEach((element) => {
+    const updateSpanElement = element.querySelector(".js-update-input");
+    const deleteSpanElement = element.querySelector(".js-delet-button");
+    updadeQuantity(updateSpanElement, element);
+    deleteButton(deleteSpanElement, element);
+  });
+};
+//importing modules needded
+import { saveButton } from "./save-button.js";
+////////////////////////////
+export function updadeQuantity(element, divElements) {
+  const updateSpan = divElements.querySelector(".js-update-span");
+  updateSpan.addEventListener("click", () => {
+    const value = updadeQuantityValue(element);
+    element.innerHTML = `<input type='number' value = ${value} class="update-number-input js-add-number
+            }"> <span class = 'save-span js-save-button'>save</span></input>`;
+    saveButton(divElements);
+  });
+}
+const updadeQuantityValue = (element) => {
+  const counter = element.querySelector(".js-add-number");
+  if (counter) {
+    const value = counter.value;
+    return value;
+  }
+  return 1;
+};
+import { cart } from "../../data/cart.js";
+import { updadeQuantity } from "./update-quantity.js";
+import { calcPrice } from "./calculate-price.js";
+export function saveButton(element) {
+  const button = element.querySelector(".js-save-button");
+  const numCounters = element.querySelector(".js-add-number");
+  const itemQuantityElement = document.querySelector(".js-items-quantity");
+  const quantityLable = element.querySelector(".js-quantity");
+  const updadeQuantityElement = element.querySelector(`.js-update-input`);
+  button.addEventListener("click", () => {
+    cart.forEach((product) => {
+      if (product.id === updadeQuantityElement.dataset.updateId) {
+        if (product.quantity + parseInt(numCounters.value) > 0) {
+          const newQuantity = (product.quantity += parseInt(numCounters.value));
+          localStorage.setItem("cart", JSON.stringify(cart));
+          const quantity = cart.reduce((acc, product) => {
+            acc += product.quantity;
+            return acc;
+          }, 0);
+          quantityLable.innerHTML = newQuantity;
+          itemQuantityElement.innerHTML = `${quantity} items`;
+          updadeQuantityElement.innerHTML = `<span class="js-update-span">Update</span>`;
+          calcPrice();
+          updadeQuantity(updadeQuantityElement, element);
+        } else {
+          alert("Invalid number (decrease by unexcbectid number)");
+        }
+      }
+    });
+  });
+}
+//importing modules needded
+import { cart } from "../../data/cart.js";
+import { calcPrice } from "./calculate-price.js";
+////////////////////////////
+export function deleteButton(deletSpan, divElement) {
+  deletSpan.addEventListener("click", () => {
+    const itemQuantityElement = document.querySelector(".js-items-quantity");
+
+    cart.forEach((cartProduct, index) => {
+      if (deletSpan.dataset.buttonId === cartProduct.id) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        divElement.remove();
+        const quantity = cart.reduce((acc, product) => {
+          acc += product.quantity;
+          return acc;
+        }, 0);
+        itemQuantityElement.innerHTML = `${quantity} items`;
+        calcPrice();
+        if (!cart.length) {
+          const checkOutGridElement =
+            document.querySelector(".js-checkout-grid");
+          let html;
+          html = `<div class="cart-empty-div">
+          <p class="cart-empty-p">Cart is Empty</p>
+          <a href="amazon.html"><button class="View-products button-primary">View products</button></a>
+        </div>`;
+          checkOutGridElement.innerHTML = html;
+        }
+      }
+    });
+  });
+}
+import { products } from "../../data/products.js";
+import { cart } from "../../data/cart.js";
+export const cartUnpacking = () => {
+  let productsInCart = [];
+  cart.forEach((productCart) => {
+    productsInCart.push([
+      products.find((product) => product.id === productCart.id),
+      productCart.quantity,
+    ]);
+  });
+  return productsInCart;
+};
+import { cart } from "../../data/cart.js";
+import { products } from "../../data/products.js";
+function simpleUnpcking() {
+  let productsInCart = [];
+  cart.forEach((productCart) => {
+    const itemInfo = products.find((product) => product.id === productCart.id);
+    productsInCart.push([itemInfo.priceCents, productCart.quantity]);
+  });
+  return productsInCart;
+}
+function totalPrice(productsInCart = []) {
+  const price = productsInCart.reduce((acc, product) => {
+    acc += product[0] * product[1];
+    return acc;
+  }, 0);
+  return price;
+}
+
+export const calcPrice = () => {
+  const productsInCart = simpleUnpcking();
+
+  const priceBeforTax = totalPrice(productsInCart);
+  const shipping = 0;
+  const priceShipping = priceBeforTax + shipping;
+  const tax = priceShipping * 0.1;
+  const priceWithTax = tax + priceShipping;
+  const cartQuantity = cart.reduce((acc, product) => {
+    acc += product.quantity;
+    return acc;
+  }, 0);
+  ///////////////////////////
+  const itemsNumElement = document.querySelector(".js-payment-row");
+  const PriceNoTaxElement = document.querySelector(".js-price-no-tax");
+  const shippingElement = document.querySelector(".js-shipping-price");
+  const priceWithShippingElement = document.querySelector(
+    ".js-total-shipping-price"
+  );
+  const taxAmountElement = document.querySelector(".js-tax");
+  const totalPriceElement = document.querySelector(".js-total-price");
+  //////////////////////////////////////////
+  itemsNumElement.innerHTML = `Items (${cartQuantity}):`;
+  PriceNoTaxElement.innerHTML = `$${(priceBeforTax / 100).toFixed(2)}`;
+  shippingElement.innerHTML = `$${(shipping / 100).toFixed(2)}`;
+  priceWithShippingElement.innerHTML = `$${(priceShipping / 100).toFixed(2)}`;
+  taxAmountElement.innerHTML = `$${(tax / 100).toFixed(2)}`;
+  totalPriceElement.innerHTML = `$${(priceWithTax / 100).toFixed(2)}`;
+};

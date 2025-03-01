@@ -220,3 +220,17 @@
   width: 50px;
   padding: 2px;
 }
+.cart-empty-div{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  height: 70px;
+}
+.cart-empty-p{
+  font-size: 16px;
+}
+.View-products{
+  padding: 8px 17px;
+  font-size: 15px;
+}
