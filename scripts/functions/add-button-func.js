@@ -1,3 +1,4 @@
+import { dateidentifyer } from "./date.js";
 export const addButtonFunc = (cart = []) => {
   // putting all Html elements that we need in variables to reuse it
   const addButtonElement = document.querySelectorAll(".js-add-button");
@@ -68,6 +69,8 @@ export const addButtonFunc = (cart = []) => {
         cart.push({
           id: productId,
           quantity: parseInt(selectquantatiyElement[index].value),
+          shipping: 0,
+          dateOfdelevier: dateidentifyer()[0],
         }); // ---> end of add new prodact to the cart
       }
       updateCart();

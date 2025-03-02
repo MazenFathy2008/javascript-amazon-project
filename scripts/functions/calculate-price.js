@@ -20,7 +20,10 @@ export const calcPrice = () => {
   const productsInCart = simpleUnpcking();
 
   const priceBeforTax = totalPrice(productsInCart);
-  const shipping = 0;
+  const shipping = cart.reduce((acc, product) => {
+    acc += product.shipping;
+    return acc;
+  }, 0);
   const priceShipping = priceBeforTax + shipping;
   const tax = priceShipping * 0.1;
   const priceWithTax = tax + priceShipping;

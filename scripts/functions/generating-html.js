@@ -1,6 +1,7 @@
 //importing modules needded
 import { cartUnpacking } from "./cartUnpacking.js";
 import { conrolingEachDiv } from "./renering-checkout.js";
+import { dateidentifyer } from "./date.js";
 ////////////////////////////
 // this used to generate html for page
 export function htmlForAmazonPage(list = []) {
@@ -82,18 +83,22 @@ const generateHtmlForRender = () => {
   }, 0);
   const checkOutGridElement = document.querySelector(".js-checkout-grid");
   const itemQuantityElement = document.querySelector(".js-items-quantity");
+  let listOfDates = dateidentifyer();
   let html = " ";
 
-  if(productsInCart.length){
-  productsInCart.forEach((product) => {
-    html += `<div class="cart-item-container js-cart-item-div">
-            <div class="delivery-date">Delivery date: Wednesday, June 15</div>
+  if (productsInCart.length) {
+    productsInCart.forEach((product) => {
+      html += `<div class="cart-item-container js-cart-item-div" data-id='${
+        product[0].id
+      }'>
+            <div class="delivery-date">Delivery date:
+            <span class='js-delivery-date'>${product[3]}</span>
+            </div>
             <div class="cart-item-details-grid">
               <img
                 class="product-image"
                 src="${product[0].image}"
               />
-  
               <div class="cart-item-details">
                 <div class="product-name">${product[0].name}</div>
                 <div class="product-price">$${(
@@ -121,54 +126,60 @@ const generateHtmlForRender = () => {
                 <div class="delivery-options-title">
                   Choose a delivery option:
                 </div>
-                <div class="delivery-option">
+                <div class="delivery-option js-delivery-options-grid">
                   <input
                     type="radio"
-                    checked
-                    class="delivery-option-input"
+                
+                    class="delivery-option-input js-radio-button"
                     name="delivery-option-${product[0].id}"
+                    data-date="${listOfDates[0]}"
+                    
                   />
                   <div>
-                    <div class="delivery-option-date">Tuesday, June 21</div>
+                    <div class="delivery-option-date">${listOfDates[0]}</div>
                     <div class="delivery-option-price">FREE Shipping</div>
                   </div>
                 </div>
-                <div class="delivery-option">
+                <div class="delivery-option js-delivery-options-grid">
                   <input
                     type="radio"
-                    class="delivery-option-input"
+                    class="delivery-option-input js-radio-button"
                     name="delivery-option-${product[0].id}"
+                    data-date="${listOfDates[1]}"
+
                   />
                   <div>
-                    <div class="delivery-option-date">Wednesday, June 15</div>
+                    <div class="delivery-option-date">${listOfDates[1]}</div>
                     <div class="delivery-option-price">$4.99 - Shipping</div>
                   </div>
                 </div>
-                <div class="delivery-option">
+                <div class="delivery-option js-delivery-options-grid">
                   <input
                     type="radio"
-                    class="delivery-option-input"
+                    class="delivery-option-input js-radio-button"
                     name="delivery-option-${product[0].id}"
+                    data-date="${listOfDates[2]}"
                   />
                   <div>
-                    <div class="delivery-option-date">Monday, June 13</div>
+                    <div class="delivery-option-date">${listOfDates[2]}</div>
                     <div class="delivery-option-price">$9.99 - Shipping</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>`;
-  });
-  checkOutGridElement.innerHTML = html;
-  }else{
+    });
+    checkOutGridElement.innerHTML = html;
+  } else {
     html = `<div class="cart-empty-div">
             <p class="cart-empty-p">Cart is Empty</p>
             <a href="amazon.html"><button class="View-products button-primary">View products</button></a>
-          </div>`
+          </div>`;
     checkOutGridElement.innerHTML = html;
   }
-  
+
   itemQuantityElement.innerHTML = `${quantity} items`;
+  console.log(productsInCart);
 };
 
 export function htmlForCkeckout() {

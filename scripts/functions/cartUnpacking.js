@@ -6,6 +6,8 @@ export const cartUnpacking = () => {
     productsInCart.push([
       products.find((product) => product.id === productCart.id),
       productCart.quantity,
+      productCart.shipping,
+      productCart.dateOfdelevier,
     ]);
   });
   return productsInCart;
