@@ -3,6 +3,7 @@ import { products } from "../data/products.js"; // --> data
 import { cart } from "../data/cart.js"; // --> data
 import { htmlForAmazonPage } from "./functions/generating-html.js"; // --> function
 import { addButtonFunc } from "./functions/add-button-func.js"; // --> function
+import "../backend/backEnd-practise.js";
 ///////////////////////////////////////////////
 /* code for generating page */
 // put the grid element in the js
@@ -13,4 +14,4 @@ productGridElement.innerHTML = Html;
 
 ///////////////////////////////////////////////
 /* cart code */
-addButtonFunc(cart)
+addButtonFunc(cart);

@@ -18,7 +18,7 @@ export function htmlForAmazonPage(list = []) {
           <div class="product-rating-container">
             <img
               class="product-rating-stars"
-              src="images/ratings/rating-${product.rating.stars * 10}.png"
+              src="${product.getStarUrl()}"
             />
             <div class="product-rating-count link-primary">
               ${product.rating.count}
@@ -26,7 +26,7 @@ export function htmlForAmazonPage(list = []) {
           </div>
 
           <div class="product-price">
-            $${(product.priceCents / 100).toFixed(2)}
+            $${product.formatPrice()}
           </div>
 
           <div class="product-quantity-container">
@@ -43,7 +43,7 @@ export function htmlForAmazonPage(list = []) {
               <option value="10">10</option>
             </select>
           </div>
-
+          ${product.extraInfo()}
           <div class="product-spacer"></div>
           <div class="add-button-flexbox">
             <div class="added-to-cart">
