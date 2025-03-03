@@ -179,7 +179,6 @@ const generateHtmlForRender = () => {
   }
 
   itemQuantityElement.innerHTML = `${quantity} items`;
-  console.log(productsInCart);
 };
 
 export function htmlForCkeckout() {

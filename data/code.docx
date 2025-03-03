@@ -1,99 +1,86 @@
+class Products {
+  id;
+  image;
+  name;
+  rating;
+  priceCents;
+  keywords;
+  constructor(productsDetail) {
+    this.id = productsDetail.id;
+    this.image = productsDetail.image;
+    this.name = productsDetail.name;
+    this.rating = productsDetail.rating;
+    this.priceCents = productsDetail.priceCents;
+    this.keywords = productsDetail.keywords;
+  }
+  getStarUrl() {
+    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+  }
+  formatPrice() {
+    return (this.priceCents / 100).toFixed(2);
+  }
+  extraInfo() {
+    return "";
+  }
+}
+class Clothes extends Products {
+  sizeChartLink;
+  constructor(productsDetail) {
+    super(productsDetail);
+    this.sizeChartLink = productsDetail.sizeChartLink;
+  }
+  extraInfo() {
+    return `<a href="${this.sizeChartLink}" target='_blank'>Size chart</a>`;
+  }
+}
+
+export let products = [];
+export function loadFromBackend(func) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://supersimplebackend.dev/products");
+  xhr.send();
+  xhr.addEventListener("load", () => {
+    products = JSON.parse(xhr.response).map((product) => {
+      if (product.type === "clothing") {
+        return new Clothes(product);
+      }
+      return new Products(product);
+    });
+    func();
+    console.log("loaded");
+  });
+}
+export const cart = JSON.parse(localStorage.getItem('cart')) || [];
 // import needed files
-import { products } from "../data/products.js"; // --> data
+import { products, loadFromBackend } from "../data/products.js"; // --> data
 import { cart } from "../data/cart.js"; // --> data
 import { htmlForAmazonPage } from "./functions/generating-html.js"; // --> function
 import { addButtonFunc } from "./functions/add-button-func.js"; // --> function
 ///////////////////////////////////////////////
-/* code for generating page */
-// put the grid element in the js
-const productGridElement = document.querySelector(".js-prodcts-grid");
-// render html
-let Html = htmlForAmazonPage(products);
-productGridElement.innerHTML = Html;
+export function collection() {
+  /* code for generating page */
+  // put the grid element in the js
+  const productGridElement = document.querySelector(".js-prodcts-grid");
+  // render html
+  let Html = htmlForAmazonPage(products);
+  productGridElement.innerHTML = Html;
 
-///////////////////////////////////////////////
-/* cart code */
-addButtonFunc(cart)
-import { dateidentifyer } from "./date.js";
-export const addButtonFunc = (cart = []) => {
-  // putting all Html elements that we need in variables to reuse it
-  const addButtonElement = document.querySelectorAll(".js-add-button");
-  const cartQuantityElement = document.querySelector(".js-cart-quantity");
-  const selectquantatiyElement = document.querySelectorAll(
-    ".js-select-quantatiy"
-  );
-  const addedAnimationElement = document.querySelectorAll(
-    ".Added-animtion-flexbox"
-  );
-  //  declearation to the cart array and get the array of products from local storage
-  const calculateQuantity = () =>
-    cart.reduce((total, item) => total + item.quantity, 0);
+  ///////////////////////////////////////////////
+  /* cart code */
+  addButtonFunc(cart);
+  console.log(0)
+}
+loadFromBackend(collection);
+//importing modules needded
+import { htmlForCkeckout } from "./functions/generating-html.js";
+import { calcPrice } from "./functions/calculate-price.js";
+import { loadFromBackend } from "../data/products.js";
+////////////////////////////
 
-  // get the quantity of the products from local storage
-  let quantity = calculateQuantity();
-
-  // set the new products in the local storage
-  const setItem = () => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-    quantity = calculateQuantity();
-  };
-  // used to render the cart on page
-  const renderCart = () => {
-    //  render the quantity of cart
-    cartQuantityElement.innerHTML = `${quantity}`;
-  };
-
-  const updateCart = () => {
-    setItem();
-    renderCart();
-  };
-  // function used to add animation when click add button
-  const animationFunc = (index) => {
-    // if condtion to check if the animation is active or not
-    if (
-      addedAnimationElement[index].style.opacity === "0" ||
-      !addedAnimationElement[index].style.opacity
-    ) {
-      //if animation is not active it start animation and set time to stope it
-      addedAnimationElement[index].style.opacity = 1;
-      addedAnimationElement[index].timeId = setTimeout(() => {
-        addedAnimationElement[index].style.opacity = 0;
-      }, 1500);
-      return;
-    }
-    /* if animation is worked and re-click on the button 
-  will increase the time of animation*/
-    clearTimeout(addedAnimationElement[index].timeId);
-    addedAnimationElement[index].timeId = setTimeout(() => {
-      addedAnimationElement[index].style.opacity = 0;
-    }, 1500);
-  };
-  // Beggining of the code
-  addButtonElement.forEach((button, index) => {
-    // ---> useing foreach to loop on each element in the array
-    const productId = button.dataset.productId; // ---> put the name of object from dataset of button
-    button.addEventListener("click", () => {
-      animationFunc(index);
-      // ---> event for each button
-      const isExist = cart.find((product) => product.id === productId);
-      //check if the product is in the cart
-      if (isExist) {
-        // increase the quantity of the product in the cart
-        isExist.quantity += parseInt(selectquantatiyElement[index].value);
-      } else {
-        // add new prodact to the cart
-        cart.push({
-          id: productId,
-          quantity: parseInt(selectquantatiyElement[index].value),
-          shipping: 0,
-          dateOfdelevier: dateidentifyer()[0],
-        }); // ---> end of add new prodact to the cart
-      }
-      updateCart();
-    });
-  });
-  updateCart();
-};
+loadFromBackend(() => {
+  htmlForCkeckout();
+  calcPrice();
+});
 //importing modules needded
 import { cartUnpacking } from "./cartUnpacking.js";
 import { conrolingEachDiv } from "./renering-checkout.js";
@@ -114,7 +101,7 @@ export function htmlForAmazonPage(list = []) {
           <div class="product-rating-container">
             <img
               class="product-rating-stars"
-              src="images/ratings/rating-${product.rating.stars * 10}.png"
+              src="${product.getStarUrl()}"
             />
             <div class="product-rating-count link-primary">
               ${product.rating.count}
@@ -122,7 +109,7 @@ export function htmlForAmazonPage(list = []) {
           </div>
 
           <div class="product-price">
-            $${(product.priceCents / 100).toFixed(2)}
+            $${product.formatPrice()}
           </div>
 
           <div class="product-quantity-container">
@@ -139,7 +126,7 @@ export function htmlForAmazonPage(list = []) {
               <option value="10">10</option>
             </select>
           </div>
-
+          ${product.extraInfo()}
           <div class="product-spacer"></div>
           <div class="add-button-flexbox">
             <div class="added-to-cart">
@@ -275,35 +262,91 @@ const generateHtmlForRender = () => {
   }
 
   itemQuantityElement.innerHTML = `${quantity} items`;
-  console.log(productsInCart);
 };
 
 export function htmlForCkeckout() {
   generateHtmlForRender();
   conrolingEachDiv();
 }
-//importing modules needded
-import { htmlForCkeckout } from "./functions/generating-html.js";
-import { calcPrice } from "./functions/calculate-price.js";
-////////////////////////////
-htmlForCkeckout();
-calcPrice();
-//importing modules needded
-import { updadeQuantity } from "./update-quantity.js";
-import { deleteButton } from "./delet-button-checkout.js";
 import { dateidentifyer } from "./date.js";
-import { renderRadio } from "./date.js";
-////////////////////////////
-export const conrolingEachDiv = () => {
-  const itemDivElements = document.querySelectorAll(".js-cart-item-div");
-  itemDivElements.forEach((element) => {
-    const updateSpanElement = element.querySelector(".js-update-input");
-    const deleteSpanElement = element.querySelector(".js-delet-button");
-    updadeQuantity(updateSpanElement, element);
-    deleteButton(deleteSpanElement, element);
-    dateidentifyer(element);
-    renderRadio(element);
+export const addButtonFunc = (cart = []) => {
+  // putting all Html elements that we need in variables to reuse it
+  const addButtonElement = document.querySelectorAll(".js-add-button");
+  const cartQuantityElement = document.querySelector(".js-cart-quantity");
+  const selectquantatiyElement = document.querySelectorAll(
+    ".js-select-quantatiy"
+  );
+  const addedAnimationElement = document.querySelectorAll(
+    ".Added-animtion-flexbox"
+  );
+  //  declearation to the cart array and get the array of products from local storage
+  const calculateQuantity = () =>
+    cart.reduce((total, item) => total + item.quantity, 0);
+
+  // get the quantity of the products from local storage
+  let quantity = calculateQuantity();
+
+  // set the new products in the local storage
+  const setItem = () => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    quantity = calculateQuantity();
+  };
+  // used to render the cart on page
+  const renderCart = () => {
+    //  render the quantity of cart
+    cartQuantityElement.innerHTML = `${quantity}`;
+  };
+
+  const updateCart = () => {
+    setItem();
+    renderCart();
+  };
+  // function used to add animation when click add button
+  const animationFunc = (index) => {
+    // if condtion to check if the animation is active or not
+    if (
+      addedAnimationElement[index].style.opacity === "0" ||
+      !addedAnimationElement[index].style.opacity
+    ) {
+      //if animation is not active it start animation and set time to stope it
+      addedAnimationElement[index].style.opacity = 1;
+      addedAnimationElement[index].timeId = setTimeout(() => {
+        addedAnimationElement[index].style.opacity = 0;
+      }, 1500);
+      return;
+    }
+    /* if animation is worked and re-click on the button 
+  will increase the time of animation*/
+    clearTimeout(addedAnimationElement[index].timeId);
+    addedAnimationElement[index].timeId = setTimeout(() => {
+      addedAnimationElement[index].style.opacity = 0;
+    }, 1500);
+  };
+  // Beggining of the code
+  addButtonElement.forEach((button, index) => {
+    // ---> useing foreach to loop on each element in the array
+    const productId = button.dataset.productId; // ---> put the name of object from dataset of button
+    button.addEventListener("click", () => {
+      animationFunc(index);
+      // ---> event for each button
+      const isExist = cart.find((product) => product.id === productId);
+      //check if the product is in the cart
+      if (isExist) {
+        // increase the quantity of the product in the cart
+        isExist.quantity += parseInt(selectquantatiyElement[index].value);
+      } else {
+        // add new prodact to the cart
+        cart.push({
+          id: productId,
+          quantity: parseInt(selectquantatiyElement[index].value),
+          shipping: 0,
+          dateOfdelevier: dateidentifyer()[0],
+        }); // ---> end of add new prodact to the cart
+      }
+      updateCart();
+    });
   });
+  updateCart();
 };
 //importing modules needded
 import { saveButton } from "./save-button.js";
@@ -357,6 +400,23 @@ export function saveButton(element) {
   });
 }
 //importing modules needded
+import { updadeQuantity } from "./update-quantity.js";
+import { deleteButton } from "./delet-button-checkout.js";
+import { dateidentifyer } from "./date.js";
+import { renderRadio } from "./date.js";
+////////////////////////////
+export const conrolingEachDiv = () => {
+  const itemDivElements = document.querySelectorAll(".js-cart-item-div");
+  itemDivElements.forEach((element) => {
+    const updateSpanElement = element.querySelector(".js-update-input");
+    const deleteSpanElement = element.querySelector(".js-delet-button");
+    updadeQuantity(updateSpanElement, element);
+    deleteButton(deleteSpanElement, element);
+    dateidentifyer(element);
+    renderRadio(element);
+  });
+};
+//importing modules needded
 import { cart } from "../../data/cart.js";
 import { calcPrice } from "./calculate-price.js";
 ////////////////////////////
@@ -389,6 +449,60 @@ export function deleteButton(deletSpan, divElement) {
     });
   });
 }
+import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
+import { cart } from "../../data/cart.js";
+import { calcPrice } from "./calculate-price.js";
+export function dateidentifyer(divItemElement = false) {
+  let nowDate = dayjs();
+  if (!divItemElement) {
+    return formater(nowDate);
+  }
+  changeShipping(divItemElement, nowDate);
+}
+const formater = (nowDate) => {
+  let date7Delve = nowDate.add(7, "day");
+  let date3Delve = nowDate.add(3, "day");
+  let dat1Delve = nowDate.add(1, "day");
+  return [
+    date7Delve.format("dddd,MMMM D"),
+    date3Delve.format("dddd,MMMM D"),
+    dat1Delve.format("dddd,MMMM D"),
+  ];
+};
+const changeShipping = (divItemElement, nowDate) => {
+  const deliveryDateElement = divItemElement.querySelector(".js-delivery-date");
+  const delevierygridElement = divItemElement.querySelectorAll(
+    ".js-delivery-options-grid"
+  );
+  delevierygridElement.forEach((element, i) => {
+    element.addEventListener("click", () => {
+      deliveryDateElement.innerHTML = formater(nowDate)[i];
+      element.querySelector(".js-radio-button").checked = true;
+      cart.forEach((product) => {
+        if (product.id === divItemElement.dataset.id) {
+          product.dateOfdelevier = formater(nowDate)[i];
+          product.shipping = [0, 499, 999][i];
+        }
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      calcPrice();
+    });
+  });
+};
+export const renderRadio = (divItemElement) => {
+  // const deliveryDateElement = divItemElement.querySelector(".js-delivery-date");
+  const radioButtonElement =
+    divItemElement.querySelectorAll(".js-radio-button");
+  const product = cart.find(
+    (product) => product.id === divItemElement.dataset.id
+  );
+
+  radioButtonElement.forEach((element) => {
+    if (element.dataset.date === product.dateOfdelevier) {
+      element.checked = true;
+    }
+  });
+};
 import { products } from "../../data/products.js";
 import { cart } from "../../data/cart.js";
 export const cartUnpacking = () => {
@@ -453,58 +567,5 @@ export const calcPrice = () => {
   taxAmountElement.innerHTML = `$${(tax / 100).toFixed(2)}`;
   totalPriceElement.innerHTML = `$${(priceWithTax / 100).toFixed(2)}`;
 };
-import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
-import { cart } from "../../data/cart.js";
-import { calcPrice } from "./calculate-price.js";
-export function dateidentifyer(divItemElement = false) {
-  let nowDate = dayjs();
-  if (!divItemElement) {
-    return formater(nowDate);
-  }
-  changeShipping(divItemElement, nowDate);
-}
-const formater = (nowDate) => {
-  let date7Delve = nowDate.add(7, "day");
-  let date3Delve = nowDate.add(3, "day");
-  let dat1Delve = nowDate.add(1, "day");
-  return [
-    date7Delve.format("dddd,MMMM D"),
-    date3Delve.format("dddd,MMMM D"),
-    dat1Delve.format("dddd,MMMM D"),
-  ];
-};
-const changeShipping = (divItemElement, nowDate) => {
-  const deliveryDateElement = divItemElement.querySelector(".js-delivery-date");
-  const delevierygridElement = divItemElement.querySelectorAll(
-    ".js-delivery-options-grid"
-  );
-  delevierygridElement.forEach((element, i) => {
-    element.addEventListener("click", () => {
-      deliveryDateElement.innerHTML = formater(nowDate)[i];
-      element.querySelector(".js-radio-button").checked = true;
-      cart.forEach((product) => {
-        if (product.id === divItemElement.dataset.id) {
-          product.dateOfdelevier = formater(nowDate)[i];
-          product.shipping = [0, 499, 999][i];
-        }
-      });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      calcPrice();
-    });
-  });
-};
-export const renderRadio = (divItemElement) => {
-  // const deliveryDateElement = divItemElement.querySelector(".js-delivery-date");
-  const radioButtonElement =
-    divItemElement.querySelectorAll(".js-radio-button");
-  const product = cart.find(
-    (product) => product.id === divItemElement.dataset.id
-  );
 
-  radioButtonElement.forEach((element) => {
-    if (element.dataset.date === product.dateOfdelevier) {
-      element.checked = true;
-    }
-  });
-};
 
