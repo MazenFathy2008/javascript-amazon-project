@@ -33,26 +33,21 @@ class Clothes extends Products {
     return `<a href="${this.sizeChartLink}" target='_blank'>Size chart</a>`;
   }
 }
-export const loadedDataPromis =new Promise((resolve) => {
-  loadFromBackend(() => {
-    resolve();
-  });
-})
+export const loadedDataPromis = loadFromBackend();
 export let products = [];
-export function loadFromBackend(func = ()=>{}) {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://supersimplebackend.dev/products");
-  xhr.send();
-  xhr.addEventListener("load", () => {
-    products = JSON.parse(xhr.response).map((product) => {
-      if (product.type === "clothing") {
-        return new Clothes(product);
-      }
-      return new Products(product);
+function loadFromBackend() {
+  const dataFromBackend = fetch("https://supersimplebackend.dev/products")
+    .then((response) => {
+      return response.json();
+    })
+    .then((productsData) => {
+      products = productsData.map((product) => {
+        if (product.type === "clothing") {
+          return new Clothes(product);
+        }
+        return new Products(product);
+      });
+      console.log("loaded");
     });
-    func();
-    console.log("loaded");
-  });
+  return dataFromBackend;
 }
-
-
