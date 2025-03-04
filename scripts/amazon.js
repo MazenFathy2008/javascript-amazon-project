@@ -1,8 +1,9 @@
 // import needed files
-import { products, loadFromBackend } from "../data/products.js"; // --> data
+import { products, loadedDataPromis } from "../data/products.js"; // --> data
 import { cart } from "../data/cart.js"; // --> data
 import { htmlForAmazonPage } from "./functions/generating-html.js"; // --> function
 import { addButtonFunc } from "./functions/add-button-func.js"; // --> function
+
 ///////////////////////////////////////////////
 export function collection() {
   /* code for generating page */
@@ -11,10 +12,9 @@ export function collection() {
   // render html
   let Html = htmlForAmazonPage(products);
   productGridElement.innerHTML = Html;
-
-  ///////////////////////////////////////////////
   /* cart code */
   addButtonFunc(cart);
-  console.log(0)
 }
-loadFromBackend(collection);
+loadedDataPromis.then(() => {
+  collection();
+});
