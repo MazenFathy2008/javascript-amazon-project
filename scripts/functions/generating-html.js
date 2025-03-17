@@ -10,7 +10,7 @@ export function htmlForAmazonPage(list = []) {
     html += `
     <div class="product-container">
           <div class="product-image-container">
-            <img class="product-image" src="${product.image}" />
+            <img class="product-image" src="${product.image}" loading="lazy" />
           </div>
 
           <div class="product-name limit-text-to-2-lines">${product.name}</div>
@@ -19,6 +19,7 @@ export function htmlForAmazonPage(list = []) {
             <img
               class="product-rating-stars"
               src="${product.getStarUrl()}"
+              loading="lazy"
             />
             <div class="product-rating-count link-primary">
               ${product.rating.count}
@@ -47,7 +48,7 @@ export function htmlForAmazonPage(list = []) {
           <div class="product-spacer"></div>
           <div class="add-button-flexbox">
             <div class="added-to-cart">
-              <img src="images/icons/checkmark.png" />
+              <img src="images/icons/checkmark.png" loading="lazy" />
               Added
             </div>
             <div class="Added-animtion-flexbox">
@@ -56,6 +57,7 @@ export function htmlForAmazonPage(list = []) {
                   src="images/icons/checkmark.png"
                   alt="checkmark"
                   class="checkmark-img"
+                  loading="lazy"
                 />
                 <span class="Added">Added</span>
               </div>
@@ -98,6 +100,7 @@ const generateHtmlForRender = () => {
               <img
                 class="product-image"
                 src="${product[0].image}"
+                loading="lazy"
               />
               <div class="cart-item-details">
                 <div class="product-name">${product[0].name}</div>
