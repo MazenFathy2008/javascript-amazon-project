@@ -67,7 +67,8 @@ export const addButtonFunc = (cart = []) => {
       } else {
         // add new prodact to the cart
         cart.push({
-          id: productId,
+          productId , id : productId,
+          deliveryOptionId: '1',
           quantity: parseInt(selectquantatiyElement[index].value),
           shipping: 0,
           dateOfdelevier: dateidentifyer()[0],

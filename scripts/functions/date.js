@@ -31,6 +31,7 @@ const changeShipping = (divItemElement, nowDate) => {
         if (product.id === divItemElement.dataset.id) {
           product.dateOfdelevier = formater(nowDate)[i];
           product.shipping = [0, 499, 999][i];
+          product.deliveryOptionId = `${i + 1}`;
         }
       });
       localStorage.setItem("cart", JSON.stringify(cart));
