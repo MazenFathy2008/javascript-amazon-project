@@ -23,7 +23,7 @@ export function deleteButton(deletSpan, divElement) {
           let html;
           html = `<div class="cart-empty-div">
           <p class="cart-empty-p">Cart is Empty</p>
-          <a href="amazon.html"><button class="View-products button-primary">View products</button></a>
+          <a href="index.html"><button class="View-products button-primary">View products</button></a>
         </div>`;
           checkOutGridElement.innerHTML = html;
         }
