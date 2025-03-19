@@ -1,6 +1,6 @@
-import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
 import { cart } from "../../data/cart.js";
 import { calcPrice } from "./calculate-price.js";
+dayjs.locale("en");
 export function dateidentifyer(divItemElement = false) {
   let nowDate = dayjs();
   if (!divItemElement) {
